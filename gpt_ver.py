@@ -23,15 +23,20 @@ class QRCodeGenerator:
         self.item_variations = []
 
     def generate_variations(self):
+        if len(self.item_variations) > 0:
+            return
         for item_type in self.item_types:
-            if item_type in self.misc:
-                # Use empty string for gender and size for the new item types
-                self.fill_misc_variation(item_type)
-            elif item_type in self.necklaces:
-                self.fill_necklace_variation(item_type)
-            else:
-                # Generate variations for other item types
-                self.fill_shirt_variation(item_type)
+            self.create_variation(item_type)
+
+    def create_variation(self, item_type):
+        if item_type in self.misc:
+            # Use empty string for gender and size for the new item types
+            self.fill_misc_variation(item_type)
+        elif item_type in self.necklaces:
+            self.fill_necklace_variation(item_type)
+        else:
+            # Generate variations for other item types
+            self.fill_shirt_variation(item_type)
 
     def fill_shirt_variation(self, item_type):
         for gender in self.genders:
