@@ -26,21 +26,26 @@ class QRCodeGenerator:
         for item_type in self.item_types:
             if item_type in self.misc:
                 # Use empty string for gender and size for the new item types
-                self.item_variations.append(
-                    {"type": item_type, "gender": "", "size": ""}
-                )
+                self.fill_misc_variation(item_type)
             elif item_type in self.necklaces:
-                for size in self.necklace_sizes:
-                    self.item_variations.append(
-                        {"type": item_type, "gender": "", "size": size}
-                    )
+                self.fill_necklace_variation(item_type)
             else:
                 # Generate variations for other item types
-                for gender in self.genders:
-                    for size in self.shirt_sizes:
-                        self.item_variations.append(
-                            {"type": item_type, "gender": gender, "size": size}
-                        )
+                self.fill_shirt_variation(item_type)
+
+    def fill_shirt_variation(self, item_type):
+        for gender in self.genders:
+            for size in self.shirt_sizes:
+                self.item_variations.append(
+                    {"type": item_type, "gender": gender, "size": size}
+                )
+
+    def fill_necklace_variation(self, item_type):
+        for size in self.necklace_sizes:
+            self.item_variations.append({"type": item_type, "gender": "", "size": size})
+
+    def fill_misc_variation(self, item_type):
+        self.item_variations.append({"type": item_type, "gender": "", "size": ""})
 
     def generate_qr_code(self, variation):
         # Generate a short unique identifier
