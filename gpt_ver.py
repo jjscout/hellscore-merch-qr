@@ -48,22 +48,32 @@ class QRCodeGenerator:
         self.item_variations.append({"type": item_type, "gender": "", "size": ""})
 
     def generate_qr_code(self, variation):
-        # Generate a short unique identifier
         short_id = shortuuid.uuid()
+        label_content = self.generate_label_content(variation)
+        qr_content = self.generate_qr_content(label_content, short_id)
 
-        # Define label content with formatted type, gender, and size
-        label_content = (
+        qr_img = self.generate_qr_image(qr_content)
+        img = self.create_empty_canvas()
+
+        self.add_label_to_image(img, label_content)
+        self.add_qr_to_image(img, qr_img)
+
+        self.save_image_with_content(img, variation, short_id)
+        self.print_generation_info(variation, short_id)
+
+    def generate_label_content(self, variation):
+        return (
             f"{variation['type']:>6}, "
             f"{variation['gender']:>6}, "
             f"{variation['size']:>4}"
         )
 
-        # Define YouTube and repository links
+    def generate_qr_content(self, label_content, short_id):
         youtube_link = "https://youtube.com/HellscoreACappella"
         repo_link = "https://github.com/jjscout/hellscore-merch-qr"
+        return f"{youtube_link}, {label_content}, {short_id}, {repo_link}"
 
-        # Generate a QR code with the specified content
-        qr_content = f"{youtube_link}, {label_content}, {short_id}, {repo_link}"
+    def generate_qr_image(self, qr_content):
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -72,19 +82,48 @@ class QRCodeGenerator:
         )
         qr.add_data(qr_content)
         qr.make(fit=True)
-        qr_img = qr.make_image(fill_color="black", back_color="white")
+        return qr.make_image(fill_color="black", back_color="white")
 
-        # Create an empty canvas (white background)
-        img = Image.new("RGB", (520, 570), color=(255, 255, 255))
-        draw = ImageDraw.Draw(img)
+    def create_empty_canvas(self):
+        return Image.new("RGB", (520, 570), color=(255, 255, 255))
 
-        # Load the font
+    def load_font(self, font_size):
+        font_path = "arial.ttf"  # Specify the path to your font file
         try:
-            font = ImageFont.truetype("arial.ttf", 50)
+            return ImageFont.truetype(font_path, font_size)
         except IOError:
-            font = ImageFont.load_default()
+            return ImageFont.load_default()
 
-        # Calculate the text size and position
+    def add_label_to_image(self, img, label_content):
+        draw = ImageDraw.Draw(img)
+        font = self.load_font(50)
+        text_x, text_y = self.calculate_text_position(img, label_content)
+        draw.text((text_x, text_y), label_content, font=font, fill=(0, 0, 0))
+
+    def add_qr_to_image(self, img, qr_img):
+        qr_x = self.calculate_qr_position(img, qr_img)
+        text_height = self.calculate_text_height(img)
+        qr_y = text_height + 10
+        img.paste(qr_img, (int(qr_x), int(qr_y)))
+
+    def save_image_with_content(self, img, variation, short_id):
+        file_name = os.path.join(
+            "qrs",
+            f"shirt_{variation['type']}_{variation['gender']}_{variation['size']}_{short_id}.png",
+        )
+        img.save(file_name)
+
+    def print_generation_info(self, variation, short_id):
+        if self.verbose:
+            print(
+                f"Generated QR code for {variation['type']} - {variation['gender']} - Size {variation['size']} - Short ID: {short_id}"
+            )
+
+    # Inside the QRCodeGenerator class
+    def calculate_text_position(self, img, label_content):
+        draw = ImageDraw.Draw(img)
+        font = self.load_font(50)  # Adjust font size as needed
+
         text_bbox = draw.textbbox((0, 0), label_content, font=font)
         text_width, text_height = (
             text_bbox[2] - text_bbox[0],
@@ -92,28 +131,18 @@ class QRCodeGenerator:
         )
         text_x = (img.width - text_width) / 2
         text_y = 10  # Position the text at the top
+        return text_x, text_y
 
-        # Set the position for the QR code
-        qr_x = (img.width - qr_img.width * 11.7) / 2
-        qr_y = text_y + text_height + 10  # Position the QR code below the text
+    def calculate_text_height(self, img):
+        draw = ImageDraw.Draw(img)
+        font = self.load_font(50)  # Adjust font size as needed
 
-        # Add the label text to the image
-        draw.text((text_x, text_y), label_content, font=font, fill=(0, 0, 0))
+        label_content = "Sample Text"  # Use a sample text to calculate height
+        text_bbox = draw.textbbox((0, 0), label_content, font=font)
+        return text_bbox[3] - text_bbox[1]
 
-        # Paste the QR code onto the image
-        img.paste(qr_img, (int(qr_x), int(qr_y)))
-
-        # Save the image with embedded label content and QR content in the 'qrs' folder
-        file_name = os.path.join(
-            "qrs",
-            f"shirt_{variation['type']}_{variation['gender']}_{variation['size']}_{short_id}.png",
-        )
-        img.save(file_name)
-
-        if self.verbose:
-            print(
-                f"Generated QR code for {variation['type']} - {variation['gender']} - Size {variation['size']} - Short ID: {short_id}"
-            )
+    def calculate_qr_position(self, img, qr_img):
+        return (img.width - qr_img.width * 11.7) / 2  # Adjust the factor as needed
 
     def generate_qr_codes(self):
         # Create 'qrs' folder and empty it if it exists
