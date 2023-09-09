@@ -17,6 +17,7 @@ class QRCodeGenerator:
         self.item_types = self.shirt_types + self.misc + self.necklaces
         self.genders = ["mens", "womens"]
         self.shirt_sizes = ["S", "M", "L", "XL", "XXL", "3XL"]
+        self.shirt_design = ["O", "N"]
         self.necklace_sizes = ["S", "L"]
 
         # Generate item variations programmatically
@@ -40,17 +41,27 @@ class QRCodeGenerator:
 
     def fill_shirt_variation(self, item_type):
         for gender in self.genders:
-            for size in self.shirt_sizes:
-                self.item_variations.append(
-                    {"type": item_type, "gender": gender, "size": size}
-                )
+            for design in self.shirt_design:
+                for size in self.shirt_sizes:
+                    self.item_variations.append(
+                        self.fill_variation(
+                            item_type=item_type, design=design, gender=gender, size=size
+                        )
+                    )
 
     def fill_necklace_variation(self, item_type):
         for size in self.necklace_sizes:
-            self.item_variations.append({"type": item_type, "gender": "", "size": size})
+            self.item_variations.append(
+                self.fill_variation(
+                    item_type=item_type, design="", gender="", size=size
+                )
+            )
 
     def fill_misc_variation(self, item_type):
-        self.item_variations.append({"type": item_type, "gender": "", "size": ""})
+        self.item_variations.append(self.fill_variation(item_type, "", "", ""))
+
+    def fill_variation(self, item_type, design, gender, size):
+        return {"type": item_type, "design": design, "gender": gender, "size": size}
 
     def generate_qr_code(self, variation, short_id):
         label_content = self.generate_label_content(variation)
@@ -68,6 +79,7 @@ class QRCodeGenerator:
     def generate_label_content(self, variation):
         return (
             f"{variation['type']:>6}, "
+            f"{variation['design']}, "
             f"{variation['gender']:>6}, "
             f"{variation['size']:>4}"
         )
@@ -107,20 +119,32 @@ class QRCodeGenerator:
     def add_qr_to_image(self, img, qr_img):
         qr_x = self.calculate_qr_position(img, qr_img)
         text_height = self.calculate_text_height(img)
-        qr_y = text_height + 10
+        qr_y = text_height + 20
         img.paste(qr_img, (int(qr_x), int(qr_y)))
 
-    def save_image_with_content(self, img, variation, short_id):
+    def save_image_with_content(self, img, variation, short_id=None, grid=False):
+        grid_str = "_grid" if grid else ""
+        id_str = short_id if short_id is not None else ""
         file_name = os.path.join(
             "qrs",
-            f"{variation['type']}_{variation['gender']}_{variation['size']}_{short_id}.png",
+            f"{variation['type']}_"
+            f"{variation['design']}_"
+            f"{variation['gender']}_"
+            f"{variation['size']}_"
+            f"{id_str}"
+            f"{grid_str}"
+            ".png",
         )
         img.save(file_name)
 
     def print_generation_info(self, variation, short_id):
         if self.verbose:
             print(
-                f"Generated QR code for {variation['type']} - {variation['gender']} - Size {variation['size']} - Short ID: {short_id}"
+                f"Generated QR code for {variation['type']} - "
+                f"{variation['design']} - "
+                f"{variation['gender']} - "
+                f"Size {variation['size']} - "
+                f"Short ID: {short_id}"
             )
 
     # Inside the QRCodeGenerator class
