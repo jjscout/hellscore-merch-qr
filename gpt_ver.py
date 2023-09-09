@@ -5,15 +5,15 @@ import shortuuid
 from PIL import Image, ImageDraw, ImageFont
 
 # Define item types, genders, and sizes
-item_types = ["shirt", "tank", "bottle", "keychain", "earring"]
+item_types = ["Shirt", "Tank", "Bottle", "Keychain", "Earring"]
 genders = ["mens", "womens"]
-sizes = ["S", "M", "L", "XL", "XXL", "XXXL"]
+sizes = ["S", "M", "L", "XL", "XXL", "3XL"]
 
 # Generate item variations programmatically
 item_variations = []
 
 for item_type in item_types:
-    if item_type in ["bottle", "keychain", "earring"]:
+    if item_type in ["Bottle", "Keychain", "Earring"]:
         # Use empty string for gender and size for the new item types
         item_variations.append({"type": item_type, "gender": "", "size": ""})
     else:
