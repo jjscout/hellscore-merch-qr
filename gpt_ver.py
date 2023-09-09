@@ -189,7 +189,53 @@ class QRCodeGenerator:
 
         print("QR code generation completed.")
 
+    def generate_qr_code_grid(self, requested_variation, rows=2, columns=3):
+        # Create an empty canvas for the grid
+        grid_width = 520 * columns
+        grid_height = 570 * rows
+        grid_img = Image.new("RGB", (grid_width, grid_height), color=(255, 255, 255))
+
+        # Calculate the spacing between QR codes
+        spacing_x = 520
+        spacing_y = 570
+
+        # Generate the QR code for the requested variation
+        # Generate QR codes for each grid cell
+        for row in range(rows):
+            for col in range(columns):
+                # Calculate the position for this QR code in the grid
+                x = col * spacing_x
+                y = row * spacing_y
+                short_id = shortuuid.uuid()
+                img = self.generate_qr_code(requested_variation, short_id)
+                # Paste the QR code into the grid
+                grid_img.paste(img, (x, y))
+        self.print_generation_info(requested_variation, short_id)
+        return grid_img
+
+    def generate_qr_code_grid_from_parameters(
+        self, item_type, gender, size, rows=2, columns=3
+    ):
+        variation = self.create_variation(item_type, gender, size)
+        return self.generate_qr_code_grid(variation, rows=rows, columns=columns)
+
+    def generate_qr_grids(self):
+        # Create 'qrs' folder and empty it if it exists
+        if os.path.exists("qrs"):
+            shutil.rmtree("qrs")
+        os.makedirs("qrs")
+
+        # Generate variations
+        self.generate_variations()
+
+        # Loop through each item variation and generate a QR code with embedded label content and QR content
+        for variation in self.item_variations:
+            img = self.generate_qr_code_grid(variation)
+            self.save_image_with_content(img, variation, grid=True)
+
+        print("QR code generation completed.")
+
 
 if __name__ == "__main__":
     generator = QRCodeGenerator(verbose=True)
-    generator.generate_qr_codes()
+    generator.generate_qr_grids()
