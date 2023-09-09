@@ -1,0 +1,32 @@
+{
+    "type": [
+        "T-Shirt",
+        "Tank",
+        "Necklace",
+        "Chocker",
+        "Coaster",
+        "Bottle",
+        "Keychain",
+        "Earring"
+    ],
+    "Gender":
+    [
+        "Men",
+        "Women",
+        " "
+    ],
+    "ShirtSize":
+    [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "XXXL"
+    ],
+    "NecklaceSize":
+    [
+        "S",
+        "L"
+    ]
+}
