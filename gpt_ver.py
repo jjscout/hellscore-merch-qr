@@ -13,7 +13,7 @@ class QRCodeGenerator:
         # Define item types, genders, and sizes
         self.misc = ["Bottle", "Keychain", "Earring", "RoundCoaster", "SquareCoaster"]
         self.necklaces = ["Necklace", "Choker"]
-        self.shirt_types = ["Shirt", "Tank", "Bottle", "Keychain", "Earring"]
+        self.shirt_types = ["Shirt", "Tank", "Bottle"]
         self.item_types = self.shirt_types + self.misc + self.necklaces
         self.genders = ["mens", "womens"]
         self.shirt_sizes = ["S", "M", "L", "XL", "XXL", "3XL"]
