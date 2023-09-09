@@ -38,9 +38,13 @@ def generate_qr_code(variation):
     # Generate a short unique identifier
     short_id = shortuuid.uuid()
 
-    # Generate a QR code with the content representing the shirt variation, short identifier, and UUID
+    # Define label and QR content
     label_content = f"{variation['gender']:>6}, {variation['size']:>4}"
-    qr_content = f"{label_content}, {short_id}"
+    youtube_link = "https://www.youtube.com/@HellscoreACappella"
+    repo_link = "https://github.com/jjscout/hellscore-merch-qr"
+    qr_content = f"{youtube_link}, {label_content}, {short_id}, {repo_link}"
+
+    # Generate a QR code with the specified content
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
