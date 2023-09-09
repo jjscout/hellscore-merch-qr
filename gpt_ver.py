@@ -11,10 +11,10 @@ class QRCodeGenerator:
         self.verbose = verbose
 
         # Define item types, genders, and sizes
-        misc = ["Bottle", "Keychain", "Earring", "RoundCoaster", "SquareCoaster"]
-        necklaces = ["Necklace", "Choker"]
-        shirt_types = ["Shirt", "Tank", "Bottle", "Keychain", "Earring"]
-        self.item_types = shirt_types + misc + necklaces
+        self.misc = ["Bottle", "Keychain", "Earring", "RoundCoaster", "SquareCoaster"]
+        self.necklaces = ["Necklace", "Choker"]
+        self.shirt_types = ["Shirt", "Tank", "Bottle", "Keychain", "Earring"]
+        self.item_types = self.shirt_types + self.misc + self.necklaces
         self.genders = ["mens", "womens"]
         self.shirt_sizes = ["S", "M", "L", "XL", "XXL", "3XL"]
         self.necklace_sizes = ["S", "L"]
@@ -24,18 +24,12 @@ class QRCodeGenerator:
 
     def generate_variations(self):
         for item_type in self.item_types:
-            if item_type in [
-                "Bottle",
-                "Keychain",
-                "Earring",
-                "RoundCoaster",
-                "SquareCoaster",
-            ]:
+            if item_type in self.misc:
                 # Use empty string for gender and size for the new item types
                 self.item_variations.append(
                     {"type": item_type, "gender": "", "size": ""}
                 )
-            elif item_type in ["Necklace", "Choker"]:
+            elif item_type in self.necklaces:
                 for size in self.necklace_sizes:
                     self.item_variations.append(
                         {"type": item_type, "gender": "", "size": size}
@@ -111,9 +105,10 @@ class QRCodeGenerator:
         )
         img.save(file_name)
 
-        print(
-            f"Generated QR code for {variation['type']} - {variation['gender']} - Size {variation['size']} - Short ID: {short_id}"
-        )
+        if self.verbose:
+            print(
+                f"Generated QR code for {variation['type']} - {variation['gender']} - Size {variation['size']} - Short ID: {short_id}"
+            )
 
     def generate_qr_codes(self):
         # Create 'qrs' folder and empty it if it exists
@@ -132,5 +127,5 @@ class QRCodeGenerator:
 
 
 if __name__ == "__main__":
-    generator = QRCodeGenerator(verbose=False)
+    generator = QRCodeGenerator(verbose=True)
     generator.generate_qr_codes()
