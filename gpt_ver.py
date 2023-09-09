@@ -5,21 +5,29 @@ import shortuuid
 from PIL import Image, ImageDraw, ImageFont
 
 # Define item types, genders, and sizes
-item_types = ["Shirt", "Tank", "Bottle", "Keychain", "Earring"]
+misc = ["Bottle", "Keychain", "Earring", "RoundCoaster", "SquareCoaster"]
+necklaces = ["Necklace", "Chocker"]
+shirt_types = ["Shirt", "Tank", "Bottle", "Keychain", "Earring"]
+item_types = shirt_types + misc + necklaces
 genders = ["mens", "womens"]
-sizes = ["S", "M", "L", "XL", "XXL", "3XL"]
+shirt_sizes = ["S", "M", "L", "XL", "XXL", "3XL"]
+necklace_sizes = ["S", "L"]
 
 # Generate item variations programmatically
 item_variations = []
 
+
 for item_type in item_types:
-    if item_type in ["Bottle", "Keychain", "Earring"]:
+    if item_type in misc:
         # Use empty string for gender and size for the new item types
         item_variations.append({"type": item_type, "gender": "", "size": ""})
+    elif item_type in necklaces:
+        for size in necklace_sizes:
+            item_variations.append({"type": item_type, "gender": "", "size": size})
     else:
         # Generate variations for other item types
         for gender in genders:
-            for size in sizes:
+            for size in shirt_sizes:
                 item_variations.append(
                     {"type": item_type, "gender": gender, "size": size}
                 )
