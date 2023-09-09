@@ -4,21 +4,25 @@ import qrcode
 import shortuuid
 from PIL import Image, ImageDraw, ImageFont
 
-# Define shirt variations
-shirt_variations = [
-    {"gender": "mens", "size": "S"},
-    {"gender": "mens", "size": "M"},
-    {"gender": "mens", "size": "L"},
-    {"gender": "mens", "size": "XL"},
-    {"gender": "mens", "size": "XXL"},
-    {"gender": "mens", "size": "XXXL"},
-    {"gender": "womens", "size": "S"},
-    {"gender": "womens", "size": "M"},
-    {"gender": "womens", "size": "L"},
-    {"gender": "womens", "size": "XL"},
-    {"gender": "womens", "size": "XXL"},
-    {"gender": "womens", "size": "XXXL"},
-]
+# Define item types, genders, and sizes
+item_types = ["Shirt", "Tank", "Bottle", "Keychain", "Earring"]
+genders = ["mens", "womens"]
+sizes = ["S", "M", "L", "XL", "XXL", "3XL"]
+
+# Generate item variations programmatically
+item_variations = []
+
+for item_type in item_types:
+    if item_type in ["Bottle", "Keychain", "Earring"]:
+        # Use empty string for gender and size for the new item types
+        item_variations.append({"type": item_type, "gender": "", "size": ""})
+    else:
+        # Generate variations for other item types
+        for gender in genders:
+            for size in sizes:
+                item_variations.append(
+                    {"type": item_type, "gender": gender, "size": size}
+                )
 
 # Font settings
 font_path = "arial.ttf"  # You may need to specify the path to a font file
@@ -38,13 +42,19 @@ def generate_qr_code(variation):
     # Generate a short unique identifier
     short_id = shortuuid.uuid()
 
-    # Define label and QR content
-    label_content = f"{variation['gender']:>6}, {variation['size']:>4}"
-    youtube_link = "https://www.youtube.com/@HellscoreACappella"
+    # Define label content with formatted type, gender, and size
+    label_content = (
+        f"{variation['type']:>6}, "
+        f"{variation['gender']:>6}, "
+        f"{variation['size']:>4}"
+    )
+
+    # Define YouTube and repository links
+    youtube_link = "https://youtube.com/HellscoreACappella"
     repo_link = "https://github.com/jjscout/hellscore-merch-qr"
-    qr_content = f"{youtube_link}, {label_content}, {short_id}, {repo_link}"
 
     # Generate a QR code with the specified content
+    qr_content = f"{youtube_link}, {label_content}, {short_id}, {repo_link}"
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -56,7 +66,7 @@ def generate_qr_code(variation):
     qr_img = qr.make_image(fill_color="black", back_color="white")
 
     # Create an empty canvas (white background)
-    img = Image.new("RGB", (500, 550), color=(255, 255, 255))
+    img = Image.new("RGB", (520, 570), color=(255, 255, 255))
     draw = ImageDraw.Draw(img)
 
     # Load the font
@@ -71,8 +81,8 @@ def generate_qr_code(variation):
     text_x = (img.width - text_width) / 2
     text_y = 10  # Position the text at the top
 
-    # Set the fixed position for the QR code
-    qr_x = 10
+    # Set the position for the QR code
+    qr_x = (img.width - qr_img.width * 11.7) / 2
     qr_y = text_y + text_height + 10  # Position the QR code below the text
 
     # Add the label text to the image
@@ -83,12 +93,13 @@ def generate_qr_code(variation):
 
     # Save the image with embedded label content and QR content in the 'qrs' folder
     file_name = os.path.join(
-        "qrs", f"shirt_{variation['gender']}_{variation['size']}_{short_id}.png"
+        "qrs",
+        f"shirt_{variation['type']}_{variation['gender']}_{variation['size']}_{short_id}.png",
     )
     img.save(file_name)
 
     print(
-        f"Generated QR code for {variation['gender']} - Size {variation['size']} - Short ID: {short_id}"
+        f"Generated QR code for {variation['type']} - {variation['gender']} - Size {variation['size']} - Short ID: {short_id}"
     )
 
 
@@ -99,8 +110,8 @@ def main():
         shutil.rmtree("qrs")
     os.makedirs("qrs")
 
-    # Loop through each shirt variation and generate a QR code with embedded label content and QR content
-    for variation in shirt_variations:
+    # Loop through each item variation and generate a QR code with embedded label content and QR content
+    for variation in item_variations:
         generate_qr_code(variation)
 
     print("QR code generation completed.")
