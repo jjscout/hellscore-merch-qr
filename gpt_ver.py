@@ -47,8 +47,7 @@ class QRCodeGenerator:
     def fill_misc_variation(self, item_type):
         self.item_variations.append({"type": item_type, "gender": "", "size": ""})
 
-    def generate_qr_code(self, variation):
-        short_id = shortuuid.uuid()
+    def generate_qr_code(self, variation, short_id):
         label_content = self.generate_label_content(variation)
         qr_content = self.generate_qr_content(label_content, short_id)
 
@@ -58,8 +57,8 @@ class QRCodeGenerator:
         self.add_label_to_image(img, label_content)
         self.add_qr_to_image(img, qr_img)
 
-        self.save_image_with_content(img, variation, short_id)
         self.print_generation_info(variation, short_id)
+        return img
 
     def generate_label_content(self, variation):
         return (
@@ -109,7 +108,7 @@ class QRCodeGenerator:
     def save_image_with_content(self, img, variation, short_id):
         file_name = os.path.join(
             "qrs",
-            f"shirt_{variation['type']}_{variation['gender']}_{variation['size']}_{short_id}.png",
+            f"{variation['type']}_{variation['gender']}_{variation['size']}_{short_id}.png",
         )
         img.save(file_name)
 
@@ -155,7 +154,9 @@ class QRCodeGenerator:
 
         # Loop through each item variation and generate a QR code with embedded label content and QR content
         for variation in self.item_variations:
-            self.generate_qr_code(variation)
+            short_id = shortuuid.uuid()
+            img = self.generate_qr_code(variation, short_id)
+            self.save_image_with_content(img, variation, short_id)
 
         print("QR code generation completed.")
 
