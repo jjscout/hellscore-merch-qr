@@ -5,17 +5,24 @@ import shortuuid
 from PIL import Image, ImageDraw, ImageFont
 
 # Define item types, genders, and sizes
-item_types = ["shirt", "tank"]
+item_types = ["shirt", "tank", "bottle", "keychain", "earring"]
 genders = ["mens", "womens"]
 sizes = ["S", "M", "L", "XL", "XXL", "XXXL"]
 
 # Generate item variations programmatically
-item_variations = [
-    {"type": item_type, "gender": gender, "size": size}
-    for item_type in item_types
-    for gender in genders
-    for size in sizes
-]
+item_variations = []
+
+for item_type in item_types:
+    if item_type in ["bottle", "keychain", "earring"]:
+        # Use empty string for gender and size for the new item types
+        item_variations.append({"type": item_type, "gender": "", "size": ""})
+    else:
+        # Generate variations for other item types
+        for gender in genders:
+            for size in sizes:
+                item_variations.append(
+                    {"type": item_type, "gender": gender, "size": size}
+                )
 
 # Font settings
 font_path = "arial.ttf"  # You may need to specify the path to a font file
@@ -75,7 +82,7 @@ def generate_qr_code(variation):
     text_y = 10  # Position the text at the top
 
     # Set the fixed position for the QR code
-    qr_x = 10
+    qr_x = 5
     qr_y = text_y + text_height + 10  # Position the QR code below the text
 
     # Add the label text to the image
