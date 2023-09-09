@@ -50,7 +50,7 @@ def generate_qr_code(variation):
     )
 
     # Define YouTube and repository links
-    youtube_link = "https://www.youtube.com/@HellscoreACappella"
+    youtube_link = "https://youtube.com/HellscoreACappella"
     repo_link = "https://github.com/jjscout/hellscore-merch-qr"
 
     # Generate a QR code with the specified content
@@ -66,7 +66,7 @@ def generate_qr_code(variation):
     qr_img = qr.make_image(fill_color="black", back_color="white")
 
     # Create an empty canvas (white background)
-    img = Image.new("RGB", (500, 550), color=(255, 255, 255))
+    img = Image.new("RGB", (520, 570), color=(255, 255, 255))
     draw = ImageDraw.Draw(img)
 
     # Load the font
@@ -81,8 +81,8 @@ def generate_qr_code(variation):
     text_x = (img.width - text_width) / 2
     text_y = 10  # Position the text at the top
 
-    # Set the fixed position for the QR code
-    qr_x = 5
+    # Set the position for the QR code
+    qr_x = (img.width - qr_img.width * 11.7) / 2
     qr_y = text_y + text_height + 10  # Position the QR code below the text
 
     # Add the label text to the image
