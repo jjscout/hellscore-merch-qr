@@ -4,8 +4,12 @@ import qrcode
 import shortuuid
 from PIL import Image, ImageDraw, ImageFont
 
+
 class QRCodeGenerator:
-    def __init__(self):
+    def __init__(self, verbose=False):
+        # Initialize verbose attribute
+        self.verbose = verbose
+
         # Define item types, genders, and sizes
         misc = ["Bottle", "Keychain", "Earring", "RoundCoaster", "SquareCoaster"]
         necklaces = ["Necklace", "Choker"]
@@ -20,17 +24,29 @@ class QRCodeGenerator:
 
     def generate_variations(self):
         for item_type in self.item_types:
-            if item_type in ["Bottle", "Keychain", "Earring", "RoundCoaster", "SquareCoaster"]:
+            if item_type in [
+                "Bottle",
+                "Keychain",
+                "Earring",
+                "RoundCoaster",
+                "SquareCoaster",
+            ]:
                 # Use empty string for gender and size for the new item types
-                self.item_variations.append({"type": item_type, "gender": "", "size": ""})
+                self.item_variations.append(
+                    {"type": item_type, "gender": "", "size": ""}
+                )
             elif item_type in ["Necklace", "Choker"]:
                 for size in self.necklace_sizes:
-                    self.item_variations.append({"type": item_type, "gender": "", "size": size})
+                    self.item_variations.append(
+                        {"type": item_type, "gender": "", "size": size}
+                    )
             else:
                 # Generate variations for other item types
                 for gender in self.genders:
                     for size in self.shirt_sizes:
-                        self.item_variations.append({"type": item_type, "gender": gender, "size": size})
+                        self.item_variations.append(
+                            {"type": item_type, "gender": gender, "size": size}
+                        )
 
     def generate_qr_code(self, variation):
         # Generate a short unique identifier
@@ -65,13 +81,16 @@ class QRCodeGenerator:
 
         # Load the font
         try:
-            font = ImageFont.truetype("arial.ttf", 36)
+            font = ImageFont.truetype("arial.ttf", 50)
         except IOError:
             font = ImageFont.load_default()
 
         # Calculate the text size and position
         text_bbox = draw.textbbox((0, 0), label_content, font=font)
-        text_width, text_height = text_bbox[2] - text_bbox[0], text_bbox[3] - text_bbox[1]
+        text_width, text_height = (
+            text_bbox[2] - text_bbox[0],
+            text_bbox[3] - text_bbox[1],
+        )
         text_x = (img.width - text_width) / 2
         text_y = 10  # Position the text at the top
 
@@ -111,6 +130,7 @@ class QRCodeGenerator:
 
         print("QR code generation completed.")
 
+
 if __name__ == "__main__":
-    generator = QRCodeGenerator()
+    generator = QRCodeGenerator(verbose=False)
     generator.generate_qr_codes()
