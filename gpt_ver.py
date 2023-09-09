@@ -4,32 +4,17 @@ import qrcode
 import shortuuid
 from PIL import Image, ImageDraw, ImageFont
 
-# Define item variations with type, gender, and size
+# Define item types, genders, and sizes
+item_types = ["shirt", "tank"]
+genders = ["mens", "womens"]
+sizes = ["S", "M", "L", "XL", "XXL", "XXXL"]
+
+# Generate item variations programmatically
 item_variations = [
-    {"type": "shirt", "gender": "mens", "size": "S"},
-    {"type": "shirt", "gender": "mens", "size": "M"},
-    {"type": "shirt", "gender": "mens", "size": "L"},
-    {"type": "shirt", "gender": "mens", "size": "XL"},
-    {"type": "shirt", "gender": "mens", "size": "XXL"},
-    {"type": "shirt", "gender": "mens", "size": "XXXL"},
-    {"type": "shirt", "gender": "womens", "size": "S"},
-    {"type": "shirt", "gender": "womens", "size": "M"},
-    {"type": "shirt", "gender": "womens", "size": "L"},
-    {"type": "shirt", "gender": "womens", "size": "XL"},
-    {"type": "shirt", "gender": "womens", "size": "XXL"},
-    {"type": "shirt", "gender": "womens", "size": "XXXL"},
-    {"type": "tank", "gender": "mens", "size": "S"},
-    {"type": "tank", "gender": "mens", "size": "M"},
-    {"type": "tank", "gender": "mens", "size": "L"},
-    {"type": "tank", "gender": "mens", "size": "XL"},
-    {"type": "tank", "gender": "mens", "size": "XXL"},
-    {"type": "tank", "gender": "mens", "size": "XXXL"},
-    {"type": "tank", "gender": "womens", "size": "S"},
-    {"type": "tank", "gender": "womens", "size": "M"},
-    {"type": "tank", "gender": "womens", "size": "L"},
-    {"type": "tank", "gender": "womens", "size": "XL"},
-    {"type": "tank", "gender": "womens", "size": "XXL"},
-    {"type": "tank", "gender": "womens", "size": "XXXL"},
+    {"type": item_type, "gender": gender, "size": size}
+    for item_type in item_types
+    for gender in genders
+    for size in sizes
 ]
 
 # Font settings
